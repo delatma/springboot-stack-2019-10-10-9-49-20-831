@@ -19,7 +19,6 @@ public class HelloResource {
 
     @GetMapping(path = "/{userName}", produces = {"application/json"})
     public ResponseEntity<String> getAll(@PathVariable String userName) {
-
         return ResponseEntity.ok("Hello:" + userName);
     }
 

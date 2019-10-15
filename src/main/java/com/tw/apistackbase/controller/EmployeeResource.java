@@ -1,23 +1,32 @@
 package com.tw.apistackbase.controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 import com.tw.apistackbase.model.Employee;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
-public class EmployeeController {
+@RestController
+public class EmployeeResource {
     private final Logger log = Logger.getLogger(this.getClass().getName());
-    @RestController
-    public class WebController {
-        @RequestMapping("/employees")
-        public Employee Sample(@RequestParam(value = "name",
-                defaultValue = "Robot") String name) {
-            Employee employee = new Employee();
-            employee.setId(1);
-            employee.setName("Your name is "+name);
-            return employee;
-        }
+
+    List<Employee> employeeList = new ArrayList<>();
+
+    @GetMapping(path = "/employees", produces = {"application/json"})
+    public List<Employee> getAll() {
+        return employeeList;
     }
+
+    @PostMapping("/add_employee")
+    public ResponseEntity createEmployee(@RequestBody Employee employee) {
+        employeeList.add(employee);
+        return ResponseEntity.ok(employee);
+    }
+
+    //    public ResponseEntity createEmployee(@RequestBody Employee employee) {
+//        employeeList.add(employee);
+//        return ResponseEntity.ok(employee);
+//    }
 
 }
