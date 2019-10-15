@@ -6,7 +6,9 @@ import com.tw.apistackbase.model.Employee;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.ListIterator;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @RestController
 public class EmployeeResource {
@@ -16,13 +18,15 @@ public class EmployeeResource {
 
     @GetMapping(path = "/employees", produces = {"application/json"})
     public List<Employee> getAll() {
-        return employeeList;
+        return employeeList.stream()
+                .map(employee -> employee)
+                .collect(Collectors.toList());
     }
 
     @PostMapping("/add_employee")
     public ResponseEntity createEmployee(@RequestBody Employee employee) {
         employeeList.add(employee);
-        return ResponseEntity.ok("Employee added: \n" + employee);
+        return ResponseEntity.ok("Employee added for ID: " + employee.getId());
     }
 
     @PutMapping("/update_employee")
@@ -33,29 +37,27 @@ public class EmployeeResource {
                 element.setAge(employee.getAge());
                 element.setGender(employee.getGender());
             }
-            if(element.getId() != employee.getId()){
-                return ResponseEntity.ok("ID does not exist!\n");
-            }
         }
-        return ResponseEntity.ok("Details updated for Employee ID: " + employee.getId() + "\n" +
-                employee);
+        return ResponseEntity.ok("Details updated for Employee ID: " + employee.getId());
     }
 
-    @RequestMapping("/delete_employee/{id}")
-    public ResponseEntity deleteEmployee(@PathVariable("id") int id){
-        for(Employee element : employeeList){
-            if(element.getId() == id){
-                employeeList.remove(element.getId());
-            }
-            if(element.getId() != id){
-                return ResponseEntity.ok("ID does not exist!\n");
+    @RequestMapping(value= "/delete_employee/{id}", method = RequestMethod.DELETE)
+    public ResponseEntity deleteEmployee(@PathVariable("id") int id) {
+        ListIterator<Employee> iter = employeeList.listIterator();
+        while(iter.hasNext()){
+            if(iter.next().getId() == id){
+                iter.remove();
             }
         }
-        return ResponseEntity.ok("Delete data of Employee ID: " + id + "\n");
+        return ResponseEntity.ok("Data delete for Employee ID: " + id);
     }
-    //    public ResponseEntity createEmployee(@RequestBody Employee employee) {
-//        employeeList.add(employee);
-//        return ResponseEntity.ok(employee);
-//    }
 
+    @GetMapping(path = "/search_employee/{id}", produces = {"application/json"})
+    public List<Employee> searchEmployee(@PathVariable("id") int id) {
+        return employeeList.stream()
+                .filter(emp -> emp.getId() == id)
+                .collect(Collectors.toList());
+    }
 }
+
+
