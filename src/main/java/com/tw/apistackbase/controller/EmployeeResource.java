@@ -1,4 +1,5 @@
 package com.tw.apistackbase.controller;
+import ch.qos.logback.core.joran.conditional.ThenOrElseActionBase;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.tw.apistackbase.model.Employee;
@@ -18,11 +19,10 @@ public class EmployeeResource {
         return employeeList;
     }
 
-
     @PostMapping("/add_employee")
     public ResponseEntity createEmployee(@RequestBody Employee employee) {
         employeeList.add(employee);
-        return ResponseEntity.ok(employee);
+        return ResponseEntity.ok("Employee added: \n" + employee);
     }
 
     @PutMapping("/update_employee")
@@ -41,6 +41,18 @@ public class EmployeeResource {
                 employee);
     }
 
+    @RequestMapping("/delete_employee/{id}")
+    public ResponseEntity deleteEmployee(@PathVariable("id") int id){
+        for(Employee element : employeeList){
+            if(element.getId() == id){
+                employeeList.remove(element.getId());
+            }
+            if(element.getId() != id){
+                return ResponseEntity.ok("ID does not exist!\n");
+            }
+        }
+        return ResponseEntity.ok("Delete data of Employee ID: " + id + "\n");
+    }
     //    public ResponseEntity createEmployee(@RequestBody Employee employee) {
 //        employeeList.add(employee);
 //        return ResponseEntity.ok(employee);
