@@ -18,10 +18,27 @@ public class EmployeeResource {
         return employeeList;
     }
 
+
     @PostMapping("/add_employee")
     public ResponseEntity createEmployee(@RequestBody Employee employee) {
         employeeList.add(employee);
         return ResponseEntity.ok(employee);
+    }
+
+    @PutMapping("/update_employee")
+    public ResponseEntity updateEmployee(@RequestBody Employee employee){
+        for(Employee element : employeeList){
+            if(element.getId() == employee.getId()){
+                element.setName(employee.getName());
+                element.setAge(employee.getAge());
+                element.setGender(employee.getGender());
+            }
+            if(element.getId() != employee.getId()){
+                return ResponseEntity.ok("ID does not exist!\n");
+            }
+        }
+        return ResponseEntity.ok("Details updated for Employee ID: " + employee.getId() + "\n" +
+                employee);
     }
 
     //    public ResponseEntity createEmployee(@RequestBody Employee employee) {
